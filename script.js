@@ -1,10 +1,23 @@
-
-function addCurrentFruit(){
-    const newCurrentFruit = Bodies.circle(310,75, 50 , {
+function addCurrentFruit(Fruit){
+    const newCurrentFruit = Bodies.circle(cursorX, 75, Fruit.radius, {
         isSleeping: true,
+        label : Fruit.label,
+        render : {
+            fillStyle: Fruit.color,
+        }
     });
     Composite.add(engine.world, newCurrentFruit);
     currentFruit = newCurrentFruit;
+}
+
+function addFruitCollid(Fruit, x, y){
+    const newFruit = Bodies.circle(x, y, Fruit.radius, {
+        label : Fruit.label,
+        render : {
+            fillStyle: Fruit.color,
+        }
+    });
+    Composite.add(engine.world, newFruit);
 }
 
 function handleMouseMove(e){
@@ -17,14 +30,13 @@ function handleMouseMove(e){
         })
         cursorX = posX;
     }
-
 }
 
 
 const Engine = Matter.Engine,
     Render = Matter.Render,
     Runner = Matter.Runner,
-    Body = Matter.Body;
+    Body = Matter.Body,
     Bodies = Matter.Bodies,
     Composite = Matter.Composite,
     Collision = Matter.Collision,
@@ -48,9 +60,9 @@ const render = Render.create({
     }
 });
 
-const ground = Bodies.rectangle(310, 700, 620, 3, { isStatic: true });
-const leftSide = Bodies.rectangle(1, 350, 2, 700, { isStatic: true });
-const rightSide = Bodies.rectangle(620, 350, 2, 700, { isStatic: true });
+const ground = Bodies.rectangle(310, 700, 620, 10, { isStatic: true });
+const leftSide = Bodies.rectangle(1, 350, 10, 700, { isStatic: true });
+const rightSide = Bodies.rectangle(620, 350, 10, 700, { isStatic: true });
 
 
 let listElements = []
@@ -63,25 +75,54 @@ Composite.add(engine.world, listElements);
 Render.run(render);
 
 const runner = Runner.create();
-
 Runner.run(runner, engine);
 
 let cursorX = 0;
 
 // Evenement Fenetre
-addCurrentFruit();
+
+let flagOut = false;
+let TabFruits = FRUITS;
+let randomFruitsID = TabFruits[Math.floor(Math.random() * 5)];
+console.log();
+addCurrentFruit(randomFruitsID);
+
 window.addEventListener("click", (e) => {
+    if(flagOut) return
+    flagOut = true;
     window.removeEventListener("mousemove", handleMouseMove);
     setTimeout(() => {
         window.addEventListener("mousemove", handleMouseMove);
-    }, 750)
+
+    }, 500)
     currentFruit.isSleeping = false;
+
     setTimeout(() => {
-        addCurrentFruit();
-    }, 750)
+        randomFruitsID = Math.floor(Math.random() * 5);
+        addCurrentFruit(TabFruits[randomFruitsID]);
+        flagOut = false;
+    }, 500)
 })
 
 window.addEventListener("mousemove", handleMouseMove);
+
+Event.on(engine, "collisionStart", (e) => {
+    e.pairs.forEach((collision) => {
+        if (collision.bodyA.label === collision.bodyB.label){
+            Composite.remove(engine.world, [collision.bodyA, collision.bodyB]);
+            const xBodyA = collision.bodyA.position.x;
+            const yBodyA = collision.bodyA.position.y;
+            const xBodyB = collision.bodyB.position.x;
+            const yBodyB = collision.bodyB.position.y;
+
+            const xBodyC = (xBodyB + xBodyA) / 2;
+            const yBodyC = (yBodyB + yBodyA) / 2;
+            const indexCurrentF = TabFruits.findIndex(Fruit => Fruit.label === collision.bodyA.label);
+            addFruitCollid(TabFruits[indexCurrentF + 1], xBodyC, yBodyC);
+
+        }
+    })
+})
 
 
 
