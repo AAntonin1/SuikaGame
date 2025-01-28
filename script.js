@@ -4,6 +4,8 @@ function addCurrentFruit(Fruit){
         label : Fruit.label,
         render : {
             fillStyle: Fruit.color,
+            //sprite: { texture: `/img/${Fruit.label}.png` },
+            restitution: 0.2,
         }
     });
     Composite.add(engine.world, newCurrentFruit);
@@ -15,6 +17,8 @@ function addFruitCollid(Fruit, x, y){
         label : Fruit.label,
         render : {
             fillStyle: Fruit.color,
+            //sprite: { texture: `/img/${Fruit.label}.png` },
+            restitution: 0.2,
         }
     });
     Composite.add(engine.world, newFruit);
@@ -30,6 +34,21 @@ function handleMouseMove(e){
         })
         cursorX = posX;
     }
+}
+
+function resetGame(){
+    let circleArray= [];
+    let allBodies = Composite.allBodies(engine.world);
+    allBodies.forEach(Bodie => {
+        if(Bodie.circleRadius > 0) circleArray.push(Bodie);
+    })
+    Composite.remove(engine.world, circleArray);
+    scoreTotal = 0
+    scoreDiv.innerText = scoreTotal;
+
+    randomFruitsID = Math.floor(Math.random() * 5);
+    addCurrentFruit(TabFruits[randomFruitsID]);
+
 }
 
 
@@ -49,13 +68,11 @@ let currentFruit = 0;
 const engine = Engine.create();
 const render = Render.create({
     engine,
-    element : document.getElementById("container"),
+    element : document.getElementById("game"),
     options: {
         width: 620,
         height: 700,
         background: "#FFEBCD",
-        showAxes: true,
-        showPositions: true,
         wireframes: false,
     }
 });
@@ -86,7 +103,7 @@ listElements.push(topLine);
 listElements.push(hideTop);
 
 
-Composite.add(engine.world, listElements);
+let composite = Composite.add(engine.world, listElements);
 Render.run(render);
 
 const runner = Runner.create();
@@ -121,7 +138,9 @@ window.addEventListener("click", (e) => {
 })
 
 window.addEventListener("mousemove", handleMouseMove);
+
 let scoreTotal = 0;
+const scoreDiv = document.getElementById("scoreTotal");
 Event.on(engine, "collisionStart", (e) => {
     e.pairs.forEach((collision) => {
         if (collision.bodyA.label === collision.bodyB.label){
@@ -132,8 +151,6 @@ Event.on(engine, "collisionStart", (e) => {
             const xBodyC = (xBodyB + xBodyA) / 2;
             const yBodyC = (yBodyB + yBodyA) / 2;
             const indexCurrentF = TabFruits.findIndex(Fruit => Fruit.label === collision.bodyA.label);
-
-            const scoreDiv = document.getElementById("scoreTotal");
 
             Composite.remove(engine.world, [collision.bodyA, collision.bodyB]);
             scoreTotal += TabFruits[indexCurrentF].point;
@@ -147,10 +164,12 @@ Event.on(engine, "collisionStart", (e) => {
             !disableAction)
         {
             alert("Game over");
+            resetGame();
         }
 
     })
 })
+
 
 
 

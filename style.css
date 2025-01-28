@@ -4,17 +4,19 @@
     width : 100%;
     align-items: center;
     justify-content: center;
+    gap: 10px;
     position: relative;
 }
 
 #score{
     order: 2;
     position: absolute;
-    top: 0%;
-    left: 75%;
-    margin: auto;
+    top: 17%;
+    right: 25%;
+    padding: 0;
+
 }
 
-p{
-    font-weight: bold;
+canvas{
+
 }
