@@ -14,7 +14,16 @@
     top: 17%;
     right: 25%;
     padding: 0;
+    color: white;
 
+}
+
+body{
+    background-image: url("/img/background.jpg");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 canvas{

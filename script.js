@@ -4,7 +4,7 @@ function addCurrentFruit(Fruit){
         label : Fruit.label,
         render : {
             fillStyle: Fruit.color,
-            //sprite: { texture: `/img/${Fruit.label}.png` },
+            sprite: { texture: `/img/${Fruit.label}.png` },
             restitution: 0.2,
         }
     });
@@ -17,7 +17,7 @@ function addFruitCollid(Fruit, x, y){
         label : Fruit.label,
         render : {
             fillStyle: Fruit.color,
-            //sprite: { texture: `/img/${Fruit.label}.png` },
+            sprite: { texture: `/img/${Fruit.label}.png` },
             restitution: 0.2,
         }
     });
@@ -72,26 +72,38 @@ const render = Render.create({
     options: {
         width: 620,
         height: 700,
-        background: "#FFEBCD",
+        background: "transparent",
         wireframes: false,
     }
 });
 
-const ground = Bodies.rectangle(310, 700, 620, 10, { isStatic: true });
-const leftSide = Bodies.rectangle(1, 490, 10, 700, { isStatic: true });
-const rightSide = Bodies.rectangle(620, 490, 10, 700, { isStatic: true });
+const ground = Bodies.rectangle(310, 700, 620, 10, {
+    isStatic: true,
+    render: {
+        fillStyle: "white",
+    }});
+const leftSide = Bodies.rectangle(1, 490, 10, 700, {
+    isStatic: true,
+    render: {
+        fillStyle: "white",
+    }});
+const rightSide = Bodies.rectangle(620, 490, 10, 700, {
+    isStatic: true,
+    render: {
+        fillStyle: "white",
+    }});
 const hideTop = Bodies.rectangle(310, 70, 620, 140, {
     isStatic: true,
     isSensor: true,
     render: {
-        fillStyle: "white",
+        fillStyle: "transparent",
     }});
 const topLine = Bodies.rectangle(310, 140, 620, 5, {
     label: "topLine",
     isStatic: true,
     isSensor: true,
     render : {
-        fillStyle: "#FFEBCD",
+        fillStyle: "transparent",
     }});
 
 
